@@ -61,7 +61,7 @@
     // Get selected product from localStorage
     const selected = JSON.parse(localStorage.getItem("selectedProduct"));
     if (selected) {
-      document.getElementById("productImage").src = "images/" + selected.image;
+      document.getElementById("productImage").src = selected.image;
       document.getElementById("productName").innerText = selected.name;
       document.getElementById("productPrice").innerText = selected.price;
     }
