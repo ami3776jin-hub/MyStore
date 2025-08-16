@@ -1,0 +1,119 @@
+<!-- ✅ index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Electron Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ☰ Menu Button -->
+  <div id="menu-button" onclick="toggleMenu()">
+      <div id="line"></div>
+      <div id="line"></div>
+      <div id="line"></div>
+  </div>
+  <div id="side-menu" class="hidden">
+    <ul>
+      <li><a href="#">Category</a></li>
+      <li><a href="login.html" id="loginLink">Login / Sign Up</a></li>
+      <li><a href="orders.html">Orders</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#">Profile</a></li>
+    </ul>
+  </div>
+
+  <div id="user-info" style="padding:10px; font-weight:bold;"></div>
+
+  <div id="container">
+    <!-- Product 1 -->
+    <div class="product">
+      <img src="images/Mobile-stand.jpg" width="100%" alt="Mobile Stand">
+      <div class="description">
+        <p>₹127.00</p>
+        <h4>Mobile Stand</h4>
+        <p>Portable mini stand</p>
+        <button onclick="buyNow('Mobile Stand', '₹127.00', 'Mobile-stand.jpg')">Buy</button>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product">
+      <img src="images/extension-board.jpg" width="100%" alt="Extension Board">
+      <div class="description">
+        <p>₹299.00</p>
+        <h4>Extension Board</h4>
+        <p>Multi-port extension board</p>
+        <button onclick="buyNow('Extension Board', '₹299.00', 'extension-board.jpg')">Buy</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+      const menu = document.getElementById("side-menu");
+      
+    function toggleMenu() {
+     let active = menu.classList.toggle("active");
+     if(active){
+         document.body.style.overflowY = "hidden";
+     }else{
+         document.body.style.overflowY = "auto";
+         
+     }
+      }
+      
+      let startX = 0;
+      let endX = 0;
+      
+      document.addEventListener("touchstart", (e)=>{
+          startX = e.touches[0].clientX;
+      });
+      
+      document.addEventListener("touchend", (e)=>{
+          endX = e.changedTouches[0].clientX;
+          
+          if(startX < 20 && endX - startX > 20){
+             document.body.style.overflowY = "hidden";
+             menu.classList.toggle("active");
+          }
+          
+          if(startX > 20 && startX - endX > 10){
+   document.body.style.overflowY = "auto";
+    menu.classList.remove("active");
+          }
+      });
+      
+    
+    
+
+    const rawUser = localStorage.getItem("user");
+    const loginLink = document.getElementById("loginLink");
+    const userInfo = document.getElementById("user-info");
+
+    try {
+      const user = JSON.parse(rawUser);
+      if (user && user.username) {
+        userInfo.innerText = "Welcome, " + user.username;
+        loginLink.innerText = "Logout";
+        loginLink.onclick = () => {
+          localStorage.removeItem("user");
+          location.reload();
+        };
+      }
+    } catch (err) {
+      if (rawUser) userInfo.innerText = "Welcome, " + rawUser;
+    }
+
+    function buyNow(name, price, image) {
+      localStorage.setItem("selectedProduct", JSON.stringify({
+        name,
+        price,
+        image
+      }));
+      location.href = "product.html";
+    }
+  </script>
+
+</body>
+</html>

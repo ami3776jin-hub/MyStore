@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Product</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- EmailJS SDK -->
+  <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+  </script>
+  <script type="text/javascript">
+    (function(){
+      emailjs.init({
+        publicKey: "Pu726zexWCGEyEua3",
+      });
+    })();
+  </script> 
+</head>
+<body>
+
+  <div id="side-menu" class="hidden">
+    <ul>
+      <li><a href="#">Category</a></li>
+      <li><a href="login.html">Login / Sign Up</a></li>
+      <li><a href="orders.html">Orders</a></li>
+      <li><a href="index.html">Home</a></li>
+    </ul>
+  </div>
+
+  <h2>Order Product</h2>
+
+  <img id="productImage" width="100%" alt="Product">
+  <h3 id="productName"></h3>
+  <p id="productPrice"></p>
+
+  <form onsubmit="placeOrder(event)">
+    <input type="text" id="name" placeholder="Your Name" required><br>
+    <input type="tel" id="phone" placeholder="Phone Number" required><br>
+    <input type="text" id="house" placeholder="Flat, House no., Building" required><br>
+    <input type="text" id="street" placeholder="Street, Area, Sector, Village" required><br>
+    <input type="text" id="landmark" placeholder="Landmark (optional)"><br>
+    <input type="text" id="pincode" placeholder="Pincode" required><br>
+    <input type="text" id="city" placeholder="City/Town" required><br>
+    <select id="state" required>
+      <option value="">Select State</option>
+      <option>Punjab</option>
+      <option>Delhi</option>
+      <option>Maharashtra</option>
+      <option>Uttar Pradesh</option>
+      <option>Bihar</option>
+    </select><br>
+    <button type="submit">Place Order</button>
+  </form>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById("side-menu").classList.toggle("hidden");
+    }
+
+    // Get selected product from localStorage
+    const selected = JSON.parse(localStorage.getItem("selectedProduct"));
+    if (selected) {
+      document.getElementById("productImage").src = "images/" + selected.image;
+      document.getElementById("productName").innerText = selected.name;
+      document.getElementById("productPrice").innerText = selected.price;
+    }
+
+    function placeOrder(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const house = document.getElementById("house").value;
+      const street = document.getElementById("street").value;
+      const landmark = document.getElementById("landmark").value;
+      const pincode = document.getElementById("pincode").value;
+      const city = document.getElementById("city").value;
+      const state = document.getElementById("state").value;
+
+      const address = `${house}, ${street}, ${landmark}, ${city}, ${state} - ${pincode}`;
+
+      let user = null;
+      try {
+        user = JSON.parse(localStorage.getItem("user"));
+      } catch (err) {
+        user = null;
+      }
+
+      const orderKey = user ? "orders_" + user.username : "guest_orders";
+      const orders = JSON.parse(localStorage.getItem(orderKey)) || [];
+
+      // Save product image also
+      const newOrder = {
+        name,
+        phone,
+        address, // saved for email only
+        product: selected.name,
+        price: selected.price,
+        image: selected.image, // ✅ added image
+        time: new Date().toLocaleString()
+      };
+
+      orders.push(newOrder);
+      localStorage.setItem(orderKey, JSON.stringify(orders));
+
+      // Send Email via EmailJS
+      emailjs.send("service_difmghz", "template_mvzl8ez", {
+        name: name,
+        phone: phone,
+        product: selected.name,
+        price: selected.price,
+        address: address,
+        time: newOrder.time
+      })
+      .then(function () {
+        window.location.href = "confirm.html";
+      }, function (error) {
+        console.error("❌ EmailJS error:", error);
+        window.location.href = "confirm.html";
+      });
+    }
+  </script>
+
+</body>
+</html>
