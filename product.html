@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
   <title>Order Product</title>
   <link rel="stylesheet" href="style.css">
 
@@ -33,6 +33,7 @@
   <img id="productImage" width="100%" alt="Product">
   <h3 id="productName"></h3>
   <p id="productPrice"></p>
+  <p id="productDescription"></p>
 
   <form onsubmit="placeOrder(event)">
     <input type="text" id="name" placeholder="Your Name" required><br>
@@ -58,12 +59,34 @@
       document.getElementById("side-menu").classList.toggle("hidden");
     }
 
-    // Get selected product from localStorage
-    const selected = JSON.parse(localStorage.getItem("selectedProduct"));
+    // ✅ Product database (no "images/")
+    const products = {
+      "mobile-stand": {
+        name: "Mobile Stand",
+        price: "₹127.00",
+        image: "Mobile-stand.jpg",
+        description: "Portable mini stand for phones"
+      },
+      "extension-board": {
+        name: "Extension Board",
+        price: "₹299.00",
+        image: "extension-board.jpg",
+        description: "Multi-port extension board for home and office"
+      }
+    };
+
+    // ✅ Get product id from URL
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const selected = products[id];
+
     if (selected) {
       document.getElementById("productImage").src = selected.image;
       document.getElementById("productName").innerText = selected.name;
       document.getElementById("productPrice").innerText = selected.price;
+      document.getElementById("productDescription").innerText = selected.description;
+    } else {
+      document.body.innerHTML = "<h2>Product not found</h2>";
     }
 
     function placeOrder(e) {
@@ -90,14 +113,13 @@
       const orderKey = user ? "orders_" + user.username : "guest_orders";
       const orders = JSON.parse(localStorage.getItem(orderKey)) || [];
 
-      // Save product image also
       const newOrder = {
         name,
         phone,
-        address, // saved for email only
+        address,
         product: selected.name,
         price: selected.price,
-        image: selected.image, // ✅ added image
+        image: selected.image, // ✅ no "images/"
         time: new Date().toLocaleString()
       };
 
