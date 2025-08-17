@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- EmailJS SDK -->
+  <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+  </script>
+  <script type="text/javascript">
+    (function(){
+      emailjs.init({
+        publicKey: "Pu726zexWCGEyEua3",
+      });
+    })();
+  </script>
+</head>
+<body>
+
+  <h2 class="checkout-heading">Order Product</h2>
+
+  <!-- ✅ Product Details -->
+  <div id="productBox" class="checkout-product">
+    <img id="productImage" alt="Product">
+    <h3 id="productName"></h3>
+    <p id="productPrice"></p>
+    <p id="productDescription"></p>
+  </div>
+
+  <!-- ✅ Address Form -->
+  <form id="addressForm" onsubmit="placeOrder(event)">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <input type="text" id="house" placeholder="Flat, House no., Building" required>
+    <input type="text" id="street" placeholder="Street, Area, Sector, Village" required>
+    <input type="text" id="landmark" placeholder="Landmark (optional)">
+    <input type="text" id="pincode" placeholder="Pincode" required>
+    <input type="text" id="city" placeholder="City/Town" required>
+    <select id="state" required>
+      <option value="">Select State</option>
+      <option>Punjab</option>
+      <option>Delhi</option>
+      <option>Maharashtra</option>
+      <option>Uttar Pradesh</option>
+      <option>Bihar</option>
+    </select>
+  </form>
+
+  <!-- ✅ Sticky Bar with Total + Place Order -->
+  <div class="checkout-bar">
+    <div class="checkout-total" id="totalPrice">Total: ₹0</div>
+    <button class="checkout-btn" onclick="document.getElementById('addressForm').requestSubmit()">Place Order</button>
+  </div>
+
+  <script>
+    // ✅ Load product
+    const selected = JSON.parse(localStorage.getItem("buyNowProduct"));
+
+    if (selected) {
+      document.getElementById("productImage").src = selected.image;
+      document.getElementById("productName").innerText = selected.name;
+      document.getElementById("productPrice").innerText = selected.price;
+      document.getElementById("productDescription").innerText = selected.description;
+      document.getElementById("totalPrice").innerText = "Total: " + selected.price;
+    } else {
+      document.body.innerHTML = "<h2>❌ No product found in checkout</h2>";
+    }
+
+    // ✅ Place order
+    function placeOrder(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const house = document.getElementById("house").value;
+      const street = document.getElementById("street").value;
+      const landmark = document.getElementById("landmark").value;
+      const pincode = document.getElementById("pincode").value;
+      const city = document.getElementById("city").value;
+      const state = document.getElementById("state").value;
+
+      const address = `${house}, ${street}, ${landmark}, ${city}, ${state} - ${pincode}`;
+
+      // ✅ Get user info
+      let user = null;
+      try {
+        user = JSON.parse(localStorage.getItem("user"));
+      } catch (err) {
+        user = null;
+      }
+
+      const orderKey = user ? "orders_" + user.username : "guest_orders";
+      const orders = JSON.parse(localStorage.getItem(orderKey)) || [];
+
+      const newOrder = {
+        name,
+        phone,
+        address,
+        product: selected.name,
+        price: selected.price,
+        image: selected.image,
+        time: new Date().toLocaleString()
+      };
+
+      orders.push(newOrder);
+      localStorage.setItem(orderKey, JSON.stringify(orders));
+
+      // ✅ Send Email via EmailJS
+      emailjs.send("service_difmghz", "template_mvzl8ez", {
+        name: name,
+        phone: phone,
+        product: selected.name,
+        price: selected.price,
+        address: address,
+        time: newOrder.time
+      })
+      .then(function () {
+        localStorage.removeItem("buyNowProduct");
+        window.location.href = "confirm.html";
+      }, function (error) {
+        console.error("❌ EmailJS error:", error);
+        localStorage.removeItem("buyNowProduct");
+        window.location.href = "confirm.html";
+      });
+    }
+  </script>
+
+</body>
+</html>

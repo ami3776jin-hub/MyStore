@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="side-menu" class="hidden">
+    <ul>
+      <li><a href="#">Category</a></li>
+      <li><a href="login.html">Login / Sign Up</a></li>
+      <li><a href="orders.html">Orders</a></li>
+      <li><a href="index.html">Home</a></li>
+    </ul>
+  </div>
+
+  <!-- ✅ Login Box -->
+  <div class="auth-box">
+    <h2>Login</h2>
+    <form onsubmit="loginUser(event)">
+      <input type="text" id="login-email" placeholder="Email or Username" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button type="submit" class="auth-btn">Login</button>
+    </form>
+    <a href="signup.html" class="auth-link">Don't have an account? Sign Up</a>
+  </div>
+
+  <script>
+    function loginUser(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const found = users.find(u => (u.email === email || u.username === email) && u.password === password);
+
+      if (found) {
+        localStorage.setItem("user", JSON.stringify(found));
+        alert("Login successful!");
+        window.location.href = "index.html";
+      } else {
+        alert("Invalid credentials. Try again.");
+      }
+    }
+  </script>
+
+</body>
+</html>

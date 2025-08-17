@@ -1,0 +1,89 @@
+<!-- ✅ product.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="product-detail">
+    <img width="100%"id="productImage" alt="Product">
+    <h2 id="productName"></h2>
+    <div class="price-section">
+      <span id="productPrice" class="price"></span>
+      <span id="productOldPrice" class="old-price"></span>
+      <span id="productDiscount" class="discount"></span>
+    </div>
+    <p id="productDescription">Portable mini stand, lightweight and durable.</p>
+    <p class="delivery">Free Delivery</p>
+    <div class="rating">⭐ <span id="productRating"></span>
+    
+   
+    </div>
+
+    <!-- ✅ Buttons -->
+    <!-- ✅ Sticky Bottom Bar -->
+<div class="bottom-bar">
+  <button class="cart-btn" onclick="addToCart()">Add to Cart</button>
+  <button class="buy-btn" onclick="goToCheckout()">Buy Now</button>
+</div>
+  </div>
+
+  <script>
+    // ✅ Same Product DB
+    const products = {
+      "mobile-stand": {
+        name: "Mobile Stand",
+        price: "₹127",
+        oldPrice: "₹199",
+        discount: "36% off",
+        image: "Mobile-stand.jpg",
+        description: "Portable mini stand, lightweight and durable.",
+        rating: "4.4 (457)"
+      },
+      "extension-board": {
+        name: "Extension Board",
+        price: "₹299",
+        oldPrice: "₹399",
+        discount: "25% off",
+        image: "extension-board.jpg",
+        description: "Multi-port extension board with safety fuse.",
+        rating: "4.7 (1200)"
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const selected = products[id];
+
+    if (selected) {
+      document.getElementById("productImage").src = selected.image;
+      document.getElementById("productName").innerText = selected.name;
+      document.getElementById("productPrice").innerText = selected.price;
+      document.getElementById("productOldPrice").innerText = selected.oldPrice;
+      document.getElementById("productDiscount").innerText = selected.discount;
+      document.getElementById("productDescription").innerText =  selected.description;
+      document.getElementById("productRating").innerText = selected.rating;
+    } else {
+      document.body.innerHTML = "<h2>❌ Product not found</h2>";
+    }
+
+    // ✅ Add to Cart
+    function addToCart() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push(selected);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("✅ Added to Cart");
+    }
+
+    // ✅ Buy Now → go to checkout
+    function goToCheckout() {
+      localStorage.setItem("buyNowProduct", JSON.stringify(selected));
+      window.location.href = "checkout.html";
+    }
+  </script>
+</body>
+</html>
