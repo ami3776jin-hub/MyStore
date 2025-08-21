@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link rel="stylesheet" href="style.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
 </head>
 <body>
 
@@ -27,8 +30,39 @@
     </form>
     <a href="signup.html" class="auth-link">Don't have an account? Sign Up</a>
   </div>
+  <nav class="bottom-nav">
+    <button onclick="change('home')"><i id="myhome"class="fa-solid fa-house"></i><br>Home</button>
+    <button onclick="change('categories')"><i id="cat" class="fa-solid fa-th-large"></i><br>Categories</button>
+    <button onclick="change('mall')"><i id="mymall" class="fa-solid fa-store"></i><br>Mall</button>
+    <button onclick="change('videoFind')"><i id="vid" class="fa-solid fa-video"></i><br>Video Finds</button>
+    <button onclick="change('myOrders')"><i id="myOrders" class="fa-solid fa-box"></i><br>My Orders</button>
+  </nav>
+
+  
 
   <script>
+      
+      
+      // Reapply active tab after reload
+window.onload = () => {
+    const active = localStorage.getItem("activeTab");
+    if(active){
+        document.getElementById("myhome").classList.remove("active");
+        document.getElementById("mymall").classList.remove("active");
+        document.getElementById("myOrders").classList.remove("active");
+        document.getElementById("cat").classList.remove("active");
+        document.getElementById("vid").classList.remove("active");
+
+        document.getElementById(
+          active === "home" ? "myhome" :
+          active === "mall" ? "mymall" :
+          active === "myOrders" ? "myOrders" :
+          active === "categories" ? "cat" : "vid"
+        ).classList.add("active");
+    }
+};
+      
+      
     function loginUser(e) {
       e.preventDefault();
 
@@ -46,6 +80,51 @@
         alert("Invalid credentials. Try again.");
       }
     }
+    
+    function change(tab){
+        let home = document.getElementById("myhome");
+        
+        let mall = document.getElementById("mymall");
+        
+       let myOrders = document.getElementById("myOrders");
+       
+       let category = document.getElementById("cat");
+       
+       let videoF = document.getElementById("vid");
+        
+        home.classList.remove("active");
+        mall.classList.remove("active");
+        
+videoF.classList.remove("active");
+
+category.classList.remove("active");
+
+myOrders.classList.remove("active");
+        
+        localStorage.setItem("activeTab", tab);
+        
+        if(tab === "home"){
+        window.location.href = "index.html";
+    home.classList.add("active");
+    }
+    
+    if(tab === "mall")
+    mall.classList.add("active");
+    
+    if(tab === "categories")
+ category.classList.add("active");
+ 
+ if(tab === "videoFind")
+ videoF.classList.add("active");
+ 
+ if(tab === "myOrders")
+ myOrders.classList.add("active");
+ 
+    
+        
+    }
+    
+    
   </script>
 
 </body>
