@@ -5,28 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
   <title>My Store</title>
   <link rel="stylesheet" href="style.css">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-
-  <!-- ☰ Menu Button -->
-  <div id="menu-button" onclick="toggleMenu()">
-    <div id="line"></div>
-    <div id="line"></div>
-    <div id="line"></div>
+<div class="search-bar">
+    <input type="text" placeholder="Search by Keyword or Product ID">
+    <button><i class="fa-solid fa-microphone"></i></button>
+    <button><i class="fa-solid fa-camera"></i></button>
   </div>
-
-  <div id="side-menu" class="hidden">
-    <ul>
-      <li><a id="user-info" href="#"></a></li>
-      <li><a href="#">Category</a></li>
-      <li><a href="login.html" id="loginLink">Login / Sign Up</a></li>
-      <li><a href="orders.html">Orders</a></li>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="#">Profile</a></li>
-    </ul>
-  </div>
-
+  
   <div id="container">
     <!-- Product 1 -->
     <a id="proLink" href="product.html?id=mobile-stand" class="product-card">
@@ -60,52 +47,92 @@
       </div>
     </a>
   </div>
+  <nav class="bottom-nav">
+    <button onclick="change('home')"><i id="myhome"class="fa-solid fa-house"></i><br>Home</button>
+    <button onclick="change('categories')"><i id="cat" class="fa-solid fa-th-large"></i><br>Categories</button>
+    <button onclick="change('mall')"><i id="mymall" class="fa-solid fa-store"></i><br>Mall</button>
+    <button onclick="change('videoFind')"><i id="vid" class="fa-solid fa-video"></i><br>Video Finds</button>
+    <button onclick="change('myOrders')"><i id="myOrders" class="fa-solid fa-box"></i><br>My Orders</button>
+  </nav>
 
   <script>
-    const menu = document.getElementById("side-menu");
+      
+    
+      
+    // Reapply active tab after reload
+window.onload = () => {
+    const active = localStorage.getItem("activeTab");
+    if(active){
+        document.getElementById("myhome").classList.remove("active");
+        document.getElementById("mymall").classList.remove("active");
+        document.getElementById("myOrders").classList.remove("active");
+        document.getElementById("cat").classList.remove("active");
+        document.getElementById("vid").classList.remove("active");
 
-    function toggleMenu() {
-      let active = menu.classList.toggle("active");
-      document.body.style.overflowY = active ? "hidden" : "auto";
+        document.getElementById(
+          active === "home" ? "myhome" :
+          active === "mall" ? "mymall" :
+          active === "myOrders" ? "myOrders" :
+          active === "categories" ? "cat" : "vid"
+        ).classList.add("active");
     }
+};
+      
+      
+      
+      
+   
+    
+    function change(tab){
+        let home = document.getElementById("myhome");
+        
+        let mall = document.getElementById("mymall");
+        
+       let myOrders = document.getElementById("myOrders");
+       
+       let category = document.getElementById("cat");
+       
+       let videoF = document.getElementById("vid");
+        
+        home.classList.remove("active");
+        mall.classList.remove("active");
+        
+videoF.classList.remove("active");
 
-    let startX = 0, endX = 0;
+category.classList.remove("active");
 
-    document.addEventListener("touchstart", (e)=>{
-      startX = e.touches[0].clientX;
-    });
-
-    document.addEventListener("touchend", (e)=>{
-      endX = e.changedTouches[0].clientX;
-
-      if(startX < 20 && endX - startX > 20){
-        document.body.style.overflowY = "hidden";
-        menu.classList.add("active");
-      }
-      if(startX > 20 && startX - endX > 10){
-        document.body.style.overflowY = "auto";
-        menu.classList.remove("active");
-      }
-    });
-
-    // ✅ User login info handling
-    const rawUser = localStorage.getItem("user");
-    const loginLink = document.getElementById("loginLink");
-    const userInfo = document.getElementById("user-info");
-
-    try {
-      const user = JSON.parse(rawUser);
-      if (user && user.username) {
-        userInfo.innerText = "Welcome, " + user.username;
-        loginLink.innerText = "Logout";
-        loginLink.onclick = () => {
-          localStorage.removeItem("user");
-          location.reload();
-        };
-      }
-    } catch (err) {
-      if (rawUser) userInfo.innerText = "Welcome, " + rawUser;
+myOrders.classList.remove("active");
+        
+    localStorage.setItem("activeTab", tab);
+    
+    
+        if(tab === "home")
+    home.classList.add("active");
+        
+    
+    
+    if(tab === "mall")
+    mall.classList.add("active");
+    
+    if(tab === "categories")
+ category.classList.add("active");
+ 
+ if(tab === "videoFind")
+ videoF.classList.add("active");
+ 
+ if(tab === "myOrders"){
+ 
+ window.location.href = "login.html";
+ 
+ myOrders.classList.add("active");
     }
+        
+    }
+    
+    
+    
+    
+    
   </script>
 
 </body>
